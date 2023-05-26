@@ -1,0 +1,38 @@
+{% extends "main/base.html" %}
+{% load custom_filters %}
+{% block title %}{{ client }}{% endblock %}
+{% block main %}
+
+<div class="container">
+	<h2 class="mt-2">{{ client }}: {{ symbol }}</h2>
+	<br>
+	<div class='row'>
+		<div class='col'>
+			<h5>Курс продажи:</h5> <br>
+			{% for ask in depth.asks %}
+				{% if forloop.counter0 > 10 %}
+					{% comment %} Do nothing {% endcomment %}
+				{% else %}
+					Цена: {{ ask.0 }}, Количество: {{ ask.0|mul:ask.1 }}
+					<br>
+				{% endif %}
+			{% endfor %}
+		</div>
+
+		<div class='col'>
+			<h5>Курс покупки:</h5> <br>
+			{% for bid in depth.bids %}
+				{% if forloop.counter0 > 10 %}
+					{% comment %} Do nothing {% endcomment %}
+				{% else %}
+					Цена: {{ bid.0 }}, Количество: {{ bid.0|mul:bid.1 }}
+					<br>
+				{% endif %}
+			{% endfor %}
+		</div>
+	</div>
+
+	{% comment %} <a class="btn btn-dark" href="/">Назад</a> {% endcomment %}
+</div>
+
+{% endblock %}

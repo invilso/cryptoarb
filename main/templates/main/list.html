@@ -1,0 +1,167 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}Вакансии для работы{% endblock %}
+{% block head %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="{% static 'main/css/select2-bootstrap.css' %}">
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+	<div class="row align-items-start">
+		<div class="col">
+			<h2 class="mt-2">Вакансии для работы</h2>
+		</div>
+		<div class="col-auto">
+			<div class="row justify-content-end">
+				{% for item in labels %}
+				{{ item.text|safe }}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	<div class="row align-items-start">
+		<div class="col">
+			<form method="get">
+				<div class="row flex-column">
+					<div class="col-sm-5 col-md-5 mb-1">
+						<select name='city' id='id_city' class="form-select" aria-label="Город">
+							<option value="">Все города</option>
+							{% for city in cities %}
+							<option value="{{ city.pk }}"
+								{% if city.pk|stringformat:"s" == request.GET.city %}selected{% endif %}>
+								{{ city.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="col-sm-5 col-md-5 mb-1">
+						<select name='category' id='id_category' class="form-select" aria-label="Специальность">
+							<option value="">Все специальности</option>
+							{% for category in categoryes %}
+							<option value="{{ category.pk }}"
+								{% if category.pk|stringformat:"s" == request.GET.category %}selected{% endif %}>
+								{{ category.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="col-sm-5 col-md-5 mb-1">
+						<select name='order' id='id_order' class="form-select" aria-label="Сортировка">
+							<option value="1" {% if '1' == request.GET.order %}selected{% endif %}>Ставка по возрастанию</option>
+							<option value="2" {% if '2' == request.GET.order %}selected{% endif %}>Ставка по убыванию</option>
+						</select>
+					</div>
+					
+					
+					<div class="col-5 mb-1">
+						<div class="row">
+							{% for sex in sexes %}
+							<div class="col">
+								<input name="sex" id="id_sex{{ sex.pk }}" class="form-check-input" type="radio" value="{{ sex.pk }}" {% if sex.pk|stringformat:"s" == request.GET.sex or request.GET.sex == ''%}checked{% endif %}>
+								<label class="form-check-label" for="id_sex{{ sex.pk }}">{{ sex.name }}</label>
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+
+					<div class="col-sm-5 col-md-5 mb-1">
+						<button class="btn btn-dark" style="margin-right: 5pt;">Найти</button>
+						<button name='clear' value="true" class="btn btn-outline-dark">Сбросить</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="col-3">
+            <div class="row flex-column justify-content-end">
+				{% comment %} <div style="display: table;">
+					{% for item in labels %}
+					{% if forloop.counter0|divisibleby:2 %}
+					<div style="display: table-row;">
+					{% endif %}
+						<div style="display: table-cell; padding-right: 10px;"><h4>{{ item.name }}</h4></div>
+					{% if forloop.counter|divisibleby:2 or forloop.last %}
+					</div>
+					{% endif %}
+					{% endfor %}
+				</div> {% endcomment %}
+			</div>
+        </div>
+	</div>
+
+	<table class="table">
+	  <thead>
+	    <tr>
+	      <th scope="col">Название</th>
+		  <th scope="col">Регион</th>
+	      <th scope="col">Город</th>
+	      <th scope="col">Ставка</th>
+	      <th scope="col">Пол</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	  	{% for item in items %}
+		<tr>
+			<td><a href="{% url 'item' item.id %}"><strong>{% if item.index %} {{item.index}} - {% endif %}{{item.name}}</strong></a></td>
+			<td>{{item.state}}</td>
+		    <td>{{item.city}}</td>
+		    {% comment %} <td>{{item.price|floatformat:"2"}}</td> {% endcomment %}
+			<td>
+			{% if item.price|floatformat == item.price|floatformat:"0" %}
+				{{ item.price|floatformat }}
+			{% else %}
+				{{ item.price|floatformat:"2" }}
+			{% endif %}
+			</td>
+		    <!-- <td>{% if item.sex == "Мужчина" %}М{% elif item.sex == "Женщина" %}Ж{% else %}М/Ж{% endif %}</td> -->
+			<td>
+		    {% for i in item.sex.all %}
+		    	{{i}}
+		    {% endfor %}
+			</td>
+		</tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#id_city').select2({
+            placeholder: "Поиск города",
+            allowClear: true,
+			theme: "bootstrap"
+        });
+    });
+	$(document).ready(function() {
+        $('#id_state').select2({
+            placeholder: "Поиск региона",
+            allowClear: true,
+			theme: "bootstrap"
+        });
+    });
+	$(document).ready(function() {
+        $('#id_category').select2({
+            placeholder: "Поиск специальности",
+            allowClear: true,
+			theme: "bootstrap"
+        });
+    });
+	$(document).ready(function() {
+        $('#id_order').select2({
+            minimumResultsForSearch: -1,
+			theme: "bootstrap"
+        });
+    });
+	{% comment %} $(document).ready(function() {
+		$('#id_city').select2();
+	}); {% endcomment %}
+</script>
+{% endblock %}
