@@ -18,8 +18,8 @@ def send_telegram_message(token, chat_id, message, parse_mode = 'html'):
         print(f"Failed to send message. Error code: {response.status_code}")
     else:
         print("Message sent successfully!")
-        
-@shared_task
+           
+@shared_task()
 def create_queryes():
     current_time = datetime.datetime.now()
     send_telegram_message(TOKEN, CHANNEL, current_time)

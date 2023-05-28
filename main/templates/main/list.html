@@ -48,9 +48,9 @@
 					</div>
 
 					<div class="col-sm-5 col-md-5 mb-1">
-						<select name='order' id='id_order' class="form-select" aria-label="Сортировка">
-							<option value="1" {% if '1' == request.GET.order %}selected{% endif %}>Ставка по возрастанию</option>
-							<option value="2" {% if '2' == request.GET.order %}selected{% endif %}>Ставка по убыванию</option>
+						<select name='order' id='id_order' class="form-select" aria-label="Сортування">
+							<option value="1" {% if '1' == request.GET.order %}selected{% endif %}>Сортування за зростанням відсотку</option>
+							<option value="2" {% if '2' == request.GET.order %}selected{% endif %}>Сортування за спаданням відсотку</option>
 						</select>
 					</div>
 					

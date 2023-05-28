@@ -5,9 +5,10 @@ class Exchange(models.Model):
     EXCHANGE_CHOICES = [
         ('binance', 'Binance'),
         ('kucoin', 'KuCoin'),
+        ('huobi', 'Huobi'),
     ]
 
-    name = models.CharField(max_length=50, choices=EXCHANGE_CHOICES)
+    name = models.CharField(max_length=50, choices=EXCHANGE_CHOICES, unique=True)
     website = models.URLField()
     api_key = models.CharField(max_length=100, default="YOUR_API_KEY")
     api_secret = models.CharField(max_length=100, default="YOUR_API_SECRET")
@@ -17,4 +18,4 @@ class Exchange(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.get_name_display()}'
