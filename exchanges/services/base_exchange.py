@@ -14,6 +14,7 @@ class ProcessedData(TypedDict):
 
 class BaseExchange:
     _price = None
+    _price_depth = None
 
     def __init__(self, api_key: str, api_secret: str, api_passphrase: str):
         self.api_key = api_key
@@ -34,11 +35,13 @@ class BaseExchange:
     def convert_quantity_to_usd_from_depth(
         self, order: Tuple[float, float], coin_pair: CoinPair
     ) -> float:
-        asks, bids = self.get_order_books(
-            self.preprocess_coin_pair(coin_pair.base_coin, "USDT")
-        )
-        ask = self.get_order(asks)
-        quantity_usd = ask[0] * order[1]
+        if not self._price_depth:
+            asks, bids = self.get_order_books(
+                self.preprocess_coin_pair(coin_pair.base_coin, "USDT")
+            )
+            ask = self.get_order(asks)
+            self._price_depth = ask[0]
+        quantity_usd = self._price_depth * order[1]
         return quantity_usd
 
     def get_order_books(
@@ -74,7 +77,7 @@ class BaseExchange:
         except Exception:
             try:
                 quantity_usd_bid = self.convert_quantity_to_usd_from_depth(
-                    order=ask, coin_pair=coin_pair
+                    order=bid, coin_pair=coin_pair
                 )
             except Exception:
                 quantity_usd_bid = None
