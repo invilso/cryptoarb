@@ -55,8 +55,8 @@
 						{% else %}
 							{% if status.parser_status %}
 								{% if status.started %}
-									<p>Парсер працює:</p>
-									<p>Опарцьовані пари: {{status.iter_coins}}/{{status.iter_all_coins}}</p>
+									<p>Парсер працює</p>
+									{% comment %} <p>Опарцьовані пари: {{status.iter_coins}}/{{status.iter_all_coins}}</p> {% endcomment %}
 								{% else %}
 									<p>Парсер трішки відпочиває</p>
 								{% endif %}
