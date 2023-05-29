@@ -4,6 +4,32 @@ from main.models import CoinPair, Order
 from typing import TypedDict, Tuple
 from django.db import transaction
 
+import json
+
+def read_json_file(filename):
+    try:
+        with open(filename, 'r') as file:
+            data = json.load(file)
+            if not isinstance(data, list):
+                data = []
+            return data
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = []
+        with open(filename, 'w') as file:
+            json.dump(data, file)
+        return data
+
+def append_to_json_file(filename, new_data):
+    data = read_json_file(filename)
+    data.append(new_data)
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+
+def clear_json_file(filename):
+    data = []
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+
 
 class ProcessedData(TypedDict):
     bid: Tuple[float, float]
@@ -15,11 +41,15 @@ class ProcessedData(TypedDict):
 class BaseExchange:
     _price = None
     _price_depth = None
+    _proxies: dict = None
 
     def __init__(self, api_key: str, api_secret: str, api_passphrase: str):
         self.api_key = api_key
         self.api_secret = api_secret
         self.api_passphrase = api_passphrase
+        
+    def set_proxy(self, proxy: dict):
+        self._proxies = proxy
 
     def preprocess_coin_pair(self, base_coin: str, quote_coin: str) -> str:
         return f"{base_coin}{quote_coin}"
@@ -131,14 +161,21 @@ class BaseExchange:
         order_ask.save()
         order_bid.save()
         
-    @transaction.atomic
-    def save_data(
+    def save_data_to_db(
         self, processed_data: ProcessedData, exchange: Exchange, coin_pair: CoinPair
-    ):
+    ):  
         if Order.objects.filter(exchange=exchange, coin_pair=coin_pair).exists():
             self.update_in_db(processed_data=processed_data, exchange=exchange, coin_pair=coin_pair)
         else:
             self.create_in_db(processed_data=processed_data, exchange=exchange, coin_pair=coin_pair)
+            
+    def save_data(self, processed_data: ProcessedData, exchange: Exchange, coin_pair: CoinPair):
+        data={
+            'exchange': exchange.pk,
+            'coin_pair': coin_pair.pk,
+            'processed_data': processed_data,
+        }
+        append_to_json_file('data.json', data)
 
 
 

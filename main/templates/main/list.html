@@ -1,6 +1,6 @@
 {% extends "main/base.html" %}
 {% load static %}
-{% block title %}Вакансии для работы{% endblock %}
+{% block title %}CRYPTOARB{% endblock %}
 {% block head %}
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -12,7 +12,7 @@
 <div class="container">
 	<div class="row align-items-start">
 		<div class="col">
-			<h2 class="mt-2">Вакансии для работы</h2>
+			<h2 class="mt-2">CRYPTOARB</h2>
 		</div>
 		<div class="col-auto">
 			<div class="row justify-content-end">
@@ -26,7 +26,7 @@
 		<div class="col">
 			<form method="get">
 				<div class="row flex-column">
-					<div class="col-sm-5 col-md-5 mb-1">
+					{% comment %} <div class="col-sm-5 col-md-5 mb-1">
 						<select name='city' id='id_city' class="form-select" aria-label="Город">
 							<option value="">Все города</option>
 							{% for city in cities %}
@@ -35,8 +35,8 @@
 								{{ city.name }}</option>
 							{% endfor %}
 						</select>
-					</div>
-					<div class="col-sm-5 col-md-5 mb-1">
+					</div> {% endcomment %}
+					{% comment %} <div class="col-sm-5 col-md-5 mb-1">
 						<select name='category' id='id_category' class="form-select" aria-label="Специальность">
 							<option value="">Все специальности</option>
 							{% for category in categoryes %}
@@ -45,31 +45,39 @@
 								{{ category.name }}</option>
 							{% endfor %}
 						</select>
-					</div>
+					</div> {% endcomment %}
 
-					<div class="col-sm-5 col-md-5 mb-1">
-						<select name='order' id='id_order' class="form-select" aria-label="Сортування">
-							<option value="1" {% if '1' == request.GET.order %}selected{% endif %}>Сортування за зростанням відсотку</option>
-							<option value="2" {% if '2' == request.GET.order %}selected{% endif %}>Сортування за спаданням відсотку</option>
-						</select>
+					<div class="col-auto mb-1">
+					{% if not status.broken %}
+						{% if status.started_now %}
+							<p>Парсер щойно було запущено, перезапустіть сторінку через декілька секунд</p>
+						{% else %}
+							{% if status.parser_status %}
+								{% if status.started %}
+									<p>Парсер працює:</p>
+									<p>Опарцьовані пари: {{status.iter_coins}}/{{status.iter_all_coins}}</p>
+								{% else %}
+									<p>Парсер трішки відпочиває</p>
+								{% endif %}
+							{% endif %}
+						{% endif %}
+					{% endif %}
 					</div>
 					
 					
-					<div class="col-5 mb-1">
+					{% comment %} <div class="col-5 mb-1">
 						<div class="row">
-							{% for sex in sexes %}
 							<div class="col">
-								<input name="sex" id="id_sex{{ sex.pk }}" class="form-check-input" type="radio" value="{{ sex.pk }}" {% if sex.pk|stringformat:"s" == request.GET.sex or request.GET.sex == ''%}checked{% endif %}>
+								<input name="sex" type="text" value="" placeholder="Введите текст" />
 								<label class="form-check-label" for="id_sex{{ sex.pk }}">{{ sex.name }}</label>
 							</div>
-							{% endfor %}
 						</div>
 					</div>
 
 					<div class="col-sm-5 col-md-5 mb-1">
 						<button class="btn btn-dark" style="margin-right: 5pt;">Найти</button>
 						<button name='clear' value="true" class="btn btn-outline-dark">Сбросить</button>
-					</div>
+					</div> {% endcomment %}
 				</div>
 			</form>
 		</div>
@@ -89,37 +97,33 @@
 			</div>
         </div>
 	</div>
-
+	<br>
 	<table class="table">
 	  <thead>
 	    <tr>
-	      <th scope="col">Название</th>
-		  <th scope="col">Регион</th>
-	      <th scope="col">Город</th>
-	      <th scope="col">Ставка</th>
-	      <th scope="col">Пол</th>
+		  <th scope="col">№</th>
+	      <th scope="col">Пара</th>
+		  <th scope="col">Купуємо A</th>
+	      <th scope="col">Продаємо B</th>
+	      <th scope="col">Bid/Ask на A</th>
+		  <th scope="col">Bid/Ask на B</th>
+		  <th scope="col">Об'єм на А</th>
+		  <th scope="col">Об'єм на B</th>
+	      <th scope="col">Спред</th>
 	    </tr>
 	  </thead>
 	  <tbody>
-	  	{% for item in items %}
+	  	{% for item in data %}
 		<tr>
-			<td><a href="{% url 'item' item.id %}"><strong>{% if item.index %} {{item.index}} - {% endif %}{{item.name}}</strong></a></td>
-			<td>{{item.state}}</td>
-		    <td>{{item.city}}</td>
-		    {% comment %} <td>{{item.price|floatformat:"2"}}</td> {% endcomment %}
-			<td>
-			{% if item.price|floatformat == item.price|floatformat:"0" %}
-				{{ item.price|floatformat }}
-			{% else %}
-				{{ item.price|floatformat:"2" }}
-			{% endif %}
-			</td>
-		    <!-- <td>{% if item.sex == "Мужчина" %}М{% elif item.sex == "Женщина" %}Ж{% else %}М/Ж{% endif %}</td> -->
-			<td>
-		    {% for i in item.sex.all %}
-		    	{{i}}
-		    {% endfor %}
-			</td>
+			<td>{{ forloop.counter }}</td>
+			<td>{{item.coin_pair}}<span style="font-size: 10px !important;">{{item.coin_pair.sell_net}}</span></td>
+			<td><a href="{{item.ask_min.exchange.website}}"><strong>{{item.ask_min.exchange.name}}</strong></a></td>
+			<td><a href="{{item.bid_max.exchange.website}}"><strong>{{item.bid_max.exchange.name}}</strong></a></td>
+			<td>{{item.bid_min}}/{{item.ask_min.price}}</td>
+			<td>{{item.bid_max.price}}/{{item.ask_max}}</td>
+			<td>${{item.ask_min.quantity_usd|floatformat:"5"}}</td>
+			<td>${{item.bid_max.quantity_usd|floatformat:"5"}}</td>
+		    <td>{{ item.spread|floatformat:"2" }}%</td>
 		</tr>
 	    {% endfor %}
 	  </tbody>
@@ -133,7 +137,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    $(document).ready(function() {
+    {% comment %} $(document).ready(function() {
         $('#id_city').select2({
             placeholder: "Поиск города",
             allowClear: true,
@@ -159,7 +163,7 @@
             minimumResultsForSearch: -1,
 			theme: "bootstrap"
         });
-    });
+    }); {% endcomment %}
 	{% comment %} $(document).ready(function() {
 		$('#id_city').select2();
 	}); {% endcomment %}

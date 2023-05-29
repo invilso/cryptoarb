@@ -6,6 +6,10 @@ class Exchange(models.Model):
         ('binance', 'Binance'),
         ('kucoin', 'KuCoin'),
         ('huobi', 'Huobi'),
+        ('poloniex', 'Poloniex'),
+        ('ascendex', 'AscendEX'),
+        ('bybit', 'ByBit'),
+        ('okx', 'OKX'),
     ]
 
     name = models.CharField(max_length=50, choices=EXCHANGE_CHOICES, unique=True)

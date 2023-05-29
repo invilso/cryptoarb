@@ -6,6 +6,7 @@ from exchanges.models import Exchange
 class CoinPair(models.Model):
     base_coin = models.CharField(max_length=50)
     quote_coin = models.CharField(max_length=50)
+    sell_net = models.CharField(max_length=5, null=True, blank=True)
     supported_exchanges = models.ManyToManyField(Exchange)
 
     def __str__(self):
@@ -24,5 +25,5 @@ class Order(models.Model):
 
     def __str__(self):
         return (
-            f"{self.coin_pair} - {self.exchange}: Price: {self.price}, Quantity: {self.quantity}, Type: {self.order_type}"
+            f"{self.coin_pair} - {self.exchange}: Price: {self.price}, Quantity: {self.quantity}, Type: {self.order_type}, USD: {self.quantity_usd}"
         )
