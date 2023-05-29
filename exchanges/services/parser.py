@@ -103,10 +103,10 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
             'errors': data_real['errors'] + errors
         }
         
-        if data['iter_all_coins'] == data['iter_coins']:
-            data['ended'] = True
-            data['started'] = False
-            log(data_real['start_time'])
+        # if data['iter_all_coins'] == data['iter_coins']:
+        #     data['ended'] = True
+        #     data['started'] = False
+        #     log(data_real['start_time'])
         write_dict_to_json(data)
         
 @shared_task
