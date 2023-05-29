@@ -60,31 +60,32 @@ def get_all_iters():
 
 @shared_task
 def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
-    global ITER_COINS
-    global ERRORS
     for coin_pair in chunk:
+        errors = 0
         try:
             em = ExchangeManager()
             em.run_parse(coin_pair=CoinPair.objects.get(pk = coin_pair), exchange=Exchange.objects.get(pk = exchange), proxies=proxies)
         except Exception as e:
-            ERRORS = ERRORS + 1
+            errors = errors + 1
             tb = sys.exception().__traceback__
             print(f'EXCEPT: {e.with_traceback(tb)}')
         
-        ITER_COINS = ITER_COINS + 1
+        data_real = read_json_to_dict()
+        
         data = {
-            'iter_coins': ITER_COINS,
-            'iter_all_coins': ITER_ALL_COINS,
+            'iter_coins': data_real['iter_coins'] + 1,
+            'iter_all_coins': get_all_iters(),
             'ended': False,
             'started': True,
-            'start_time': START_TIME,
+            'start_time': data_real['start_time'],
             'parser_status': True, 
-            'errors': ERRORS
+            'errors': data_real['errors'] + errors
         }
-        if ITER_COINS == ITER_ALL_COINS:
+        
+        if data['iter_all_coins'] == data['iter_coins']:
             data['ended'] = True
             data['started'] = False
-            print(time.time() - START_TIME)
+            print(data_real['start_time'])
         write_dict_to_json(data)
         
 @shared_task
@@ -105,26 +106,21 @@ def exchange_thread(exchange: int):
             # t.daemon = True
             # t.start()
     except Exception as e:
-        global ERRORS
-        ERRORS = ERRORS + 1
+        data_real = read_json_to_dict()
         print(f'EXCEPT: {e}')
         data = {
-            'iter_coins': ITER_COINS,
-            'iter_all_coins': ITER_ALL_COINS,
+            'iter_coins': data_real['iter_coins'],
+            'iter_all_coins': get_all_iters(),
             'ended': False,
             'started': True,
-            'start_time': START_TIME,
-            'parser_status': True, 
-            'errors': ERRORS
+            'start_time': data_real['start_time'],
+            'parser_status': True,
+            'errors': data_real['errors'] + 1
         }
         write_dict_to_json(data)
         
 @shared_task
 def main_loop():
-    global ITER_COINS
-    global ITER_ALL_COINS
-    global START_TIME
-    global ERRORS
     x = 0
     data = {
         'ended': False,
@@ -134,10 +130,16 @@ def main_loop():
     write_dict_to_json(data)
     while True:
         try:
-            ERRORS = 0
-            ITER_COINS = 0
-            ITER_ALL_COINS = get_all_iters()
-            START_TIME = time.time()
+            data = {
+                'iter_coins': 0,
+                'iter_all_coins': get_all_iters(),
+                'ended': False,
+                'started': True,
+                'start_time': time.time(),
+                'parser_status': True,
+                'errors': 0
+            }
+            write_dict_to_json(data)
             exchanges = Exchange.objects.all()
             for i, exchange in enumerate(exchanges):
                 exchange_thread.delay(exchange.pk)
@@ -145,8 +147,11 @@ def main_loop():
                 # t.daemon = True
                 # t.start()
                 # exchange_thread(exchange)
-            
-            while ITER_ALL_COINS != ITER_COINS and ITER_ALL_COINS != 0:
+                
+            while True:
+                data_real = read_json_to_dict()
+                if data_real['iter_all_coins'] == data_real['iter_coins']:
+                    break
                 time.sleep(1)
         except Exception as e:
             print('Omg')
@@ -162,13 +167,9 @@ def main_loop():
         if x > 5:
             break
     data = {
-        'iter_coins': ITER_COINS,
-        'iter_all_coins': ITER_ALL_COINS,
         'ended': True,
         'started': False,
-        'start_time': START_TIME,
-        'parser_status': False,
-        'errors': ERRORS
+        'parser_status': False
     }
     write_dict_to_json(data)
 
