@@ -170,11 +170,11 @@ def main_loop():
                 # t.start()
                 # exchange_thread(exchange)
                 
-            while True:
-                data_real = read_json_to_dict()
-                if data_real['iter_all_coins'] == data_real['iter_coins']:
-                    break
-                time.sleep(1)
+            # while True:
+            #     data_real = read_json_to_dict()
+            #     if data_real['iter_all_coins'] == data_real['iter_coins']:
+            #         break
+            #     time.sleep(1)
         except Exception as e:
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
             log('Omg')
