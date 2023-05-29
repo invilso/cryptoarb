@@ -59,12 +59,13 @@ def get_all_iters():
     return x
 
 @shared_task
-def coin_thread(chunk: list, exchange: Exchange, em: ExchangeManager, proxies: dict[str, str]):
+def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
     global ITER_COINS
     global ERRORS
     for coin_pair in chunk:
         try:
-            em.run_parse(coin_pair=coin_pair, exchange=exchange, proxies=proxies)
+            em = ExchangeManager()
+            em.run_parse(coin_pair=CoinPair.objects.get(pk = coin_pair), exchange=Exchange.objects.get(pk = exchange), proxies=proxies)
         except Exception as e:
             ERRORS = ERRORS + 1
             tb = sys.exception().__traceback__
@@ -87,16 +88,19 @@ def coin_thread(chunk: list, exchange: Exchange, em: ExchangeManager, proxies: d
         write_dict_to_json(data)
         
 @shared_task
-def exchange_thread(exchange: Exchange, em: ExchangeManager):
+def exchange_thread(exchange: int):
     try:
         coins = CoinPair.objects.all()
-        chunks = split_into_chunks(coins, 3)
+        coins_ids = []
+        for coin in coins:
+            coins_ids.append(coin.pk)
+        chunks = split_into_chunks(coins_ids, 3)
         for i, chunk in enumerate(chunks):
             proxies = {
                 'http': f'socks5://username{i}:password{i}@localhost:9050',
                 'https': f'socks5://username{i}:password{i}@localhost:9050'
             }
-            coin_thread.delay(chunk, exchange, em, proxies)
+            coin_thread.delay(chunk, exchange, proxies)
             # t = Thread(target=coin_thread, args=[chunk, exchange, em, proxies])
             # t.daemon = True
             # t.start()
@@ -134,10 +138,9 @@ def main_loop():
             ITER_COINS = 0
             ITER_ALL_COINS = get_all_iters()
             START_TIME = time.time()
-            em = ExchangeManager()
             exchanges = Exchange.objects.all()
             for i, exchange in enumerate(exchanges):
-                exchange_thread.delay(exchange, em)
+                exchange_thread.delay(exchange.pk)
                 # t = Thread(target=exchange_thread, args=[exchange, em])
                 # t.daemon = True
                 # t.start()
@@ -145,8 +148,9 @@ def main_loop():
             
             while ITER_ALL_COINS != ITER_COINS and ITER_ALL_COINS != 0:
                 time.sleep(1)
-        except Exception:
+        except Exception as e:
             print('Omg')
+            print(e)
         data = read_json_file('data.json')
         for v in data:
             be = BaseExchange('dada', 'dadasas', 'asdasdasas')
