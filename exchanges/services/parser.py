@@ -1,3 +1,4 @@
+import requests
 from .exchange_manager import ExchangeManager
 from ..models import Exchange
 from main.models import CoinPair
@@ -9,6 +10,23 @@ from typing import Dict, Any
 import sys
 from celery import shared_task
 from cryptoarb.utils import log
+
+TOKEN = '5660072628:AAFWzMHIdZpmvKEnLpQqKxT4IzHcLsaCYHc'
+CHANNEL = '@fortestsinvilso'
+
+def send_telegram_message(token, chat_id, message, parse_mode = 'html'):
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    data = {
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": parse_mode,
+        "disable_web_page_preview": True
+    }
+    response = requests.post(url, data=data)
+    if response.status_code != 200:
+        print(f"Failed to send message. Error code: {response.status_code}")
+    else:
+        print("Message sent successfully!")
 
 
 def write_dict_to_json(data: Dict[str, Any], filename: str = "status.json") -> None:
@@ -70,6 +88,7 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
             errors = errors + 1
             tb = sys.exception().__traceback__
             log(f'EXCEPT: {e}')
+            send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
             log(f'EXCEPT: {e.with_traceback(tb)}')
         
         data_real = read_json_to_dict()
@@ -109,6 +128,7 @@ def exchange_thread(exchange: int):
             # t.start()
     except Exception as e:
         data_real = read_json_to_dict()
+        send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
         log(f'EXCEPT: {e}')
         data = {
             'iter_coins': data_real['iter_coins'],
@@ -156,6 +176,7 @@ def main_loop():
                     break
                 time.sleep(1)
         except Exception as e:
+            send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
             log('Omg')
             log(e)
         time.sleep(30)
