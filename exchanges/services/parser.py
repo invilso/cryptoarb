@@ -69,6 +69,7 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
         except Exception as e:
             errors = errors + 1
             tb = sys.exception().__traceback__
+            log(f'EXCEPT: {e}')
             log(f'EXCEPT: {e.with_traceback(tb)}')
         
         data_real = read_json_to_dict()
