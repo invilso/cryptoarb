@@ -157,10 +157,10 @@ def main_loop():
         except Exception as e:
             log('Omg')
             log(e)
-        time.sleep(5)
+        time.sleep(30)
         x+=1
         log(x)
-        if x > 5:
+        if x > 150:
             break
     data = {
         'ended': True,
