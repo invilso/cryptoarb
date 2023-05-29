@@ -179,7 +179,7 @@ def main_loop():
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
             log('Omg')
             log(e)
-        time.sleep(30)
+        time.sleep(30+(get_all_iters()/2))
         x+=1
         log(x)
         if x > 150:
