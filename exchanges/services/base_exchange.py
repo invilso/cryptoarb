@@ -161,7 +161,7 @@ class BaseExchange:
         order_ask.save()
         order_bid.save()
         
-    def save_data_to_db(
+    def save_data(
         self, processed_data: ProcessedData, exchange: Exchange, coin_pair: CoinPair
     ):  
         if Order.objects.filter(exchange=exchange, coin_pair=coin_pair).exists():
@@ -169,7 +169,7 @@ class BaseExchange:
         else:
             self.create_in_db(processed_data=processed_data, exchange=exchange, coin_pair=coin_pair)
             
-    def save_data(self, processed_data: ProcessedData, exchange: Exchange, coin_pair: CoinPair):
+    def save_data_to_json(self, processed_data: ProcessedData, exchange: Exchange, coin_pair: CoinPair):
         data={
             'exchange': exchange.pk,
             'coin_pair': coin_pair.pk,

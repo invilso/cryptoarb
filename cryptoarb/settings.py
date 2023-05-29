@@ -32,6 +32,8 @@ DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
+LOGIN_REDIRECT_URL = '/'
+
 START_PARSE_TIME = 0
 
 # Application definition

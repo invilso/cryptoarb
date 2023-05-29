@@ -16,9 +16,9 @@
 		</div>
 		<div class="col-auto">
 			<div class="row justify-content-end">
-				{% for item in labels %}
-				{{ item.text|safe }}
-				{% endfor %}
+				{% if user.is_authenticated %}
+				<a class="btn btn-primary mt-2" href="{% url 'logout' %}" target="_blank" role="button">Вийти</a>
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -48,6 +48,7 @@
 					</div> {% endcomment %}
 
 					<div class="col-auto mb-1">
+					{% if user.is_authenticated %}
 					{% if not status.broken %}
 						{% if status.started_now %}
 							<p>Парсер щойно було запущено, перезапустіть сторінку через декілька секунд</p>
@@ -61,6 +62,7 @@
 								{% endif %}
 							{% endif %}
 						{% endif %}
+					{% endif %}
 					{% endif %}
 					</div>
 					
@@ -98,6 +100,7 @@
         </div>
 	</div>
 	<br>
+	{% if user.is_authenticated %}
 	<table class="table">
 	  <thead>
 	    <tr>
@@ -128,6 +131,10 @@
 	    {% endfor %}
 	  </tbody>
 	</table>
+	{% else %}
+	<p>Ви не увійшли, виправте це :)</p>
+	<a class="btn btn-primary" href="{% url 'login' %}" target="_blank" role="button">Увійти</a>
+	{% endif %}
 
 </div>
 

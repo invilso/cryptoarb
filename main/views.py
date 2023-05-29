@@ -8,15 +8,18 @@ write_dict_to_json({'parser_status':False})
 
 def MainView(request):
     try:
-        status = read_json_to_dict()
-        if not status['parser_status']:
-            main()
-            status['started_now'] = True
-        else:
-            timedelta = time.time() - status['start_time']
-            if timedelta > 60:
+        if request.user.is_authenticated and request.user.is_active:
+            status = read_json_to_dict()
+            if not status['parser_status']:
                 main()
-                status['started_now'] = True  
+                status['started_now'] = True
+            else:
+                timedelta = time.time() - status['start_time']
+                if timedelta > 60:
+                    main()
+                    status['started_now'] = True 
+        else:
+            status = {'broken': True}
     except Exception as e:
         print(e)
         status = {'broken': True}

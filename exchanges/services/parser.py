@@ -156,11 +156,6 @@ def main_loop():
         except Exception as e:
             print('Omg')
             print(e)
-        data = read_json_file('data.json')
-        for v in data:
-            be = BaseExchange('dada', 'dadasas', 'asdasdasas')
-            be.save_data_to_db(exchange=Exchange.objects.get(pk = v['exchange']), coin_pair=CoinPair.objects.get(pk = v['coin_pair']), processed_data=v['processed_data'])
-        clear_json_file('data.json')
         time.sleep(5)
         x+=1
         print(x)
