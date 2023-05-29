@@ -4,6 +4,7 @@ from binance.client import Client
 from kucoin.client import Client as KuCoinClient
 from .models import CoinPair, Order
 from exchanges.services.parser import read_json_to_dict, main, write_dict_to_json
+from cryptoarb.utils import log
 write_dict_to_json({'parser_status':False})
 
 def MainView(request):
@@ -21,7 +22,7 @@ def MainView(request):
         else:
             status = {'broken': True}
     except Exception as e:
-        print(e)
+        log(e)
         status = {'broken': True}
     data = []
     for coin in CoinPair.objects.all():

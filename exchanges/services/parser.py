@@ -8,6 +8,7 @@ from .base_exchange import read_json_file, clear_json_file, BaseExchange
 from typing import Dict, Any
 import sys
 from celery import shared_task
+from cryptoarb.utils import log
 
 
 def write_dict_to_json(data: Dict[str, Any], filename: str = "status.json") -> None:
@@ -43,7 +44,7 @@ def timer(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         execution_time = end_time - start_time
-        print(f"Функция {func.__name__} выполнилась за {execution_time} секунд")
+        log(f"Функция {func.__name__} выполнилась за {execution_time} секунд")
         return result
 
     return wrapper
@@ -68,7 +69,7 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
         except Exception as e:
             errors = errors + 1
             tb = sys.exception().__traceback__
-            print(f'EXCEPT: {e.with_traceback(tb)}')
+            log(f'EXCEPT: {e.with_traceback(tb)}')
         
         data_real = read_json_to_dict()
         
@@ -85,7 +86,7 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
         if data['iter_all_coins'] == data['iter_coins']:
             data['ended'] = True
             data['started'] = False
-            print(data_real['start_time'])
+            log(data_real['start_time'])
         write_dict_to_json(data)
         
 @shared_task
@@ -107,7 +108,7 @@ def exchange_thread(exchange: int):
             # t.start()
     except Exception as e:
         data_real = read_json_to_dict()
-        print(f'EXCEPT: {e}')
+        log(f'EXCEPT: {e}')
         data = {
             'iter_coins': data_real['iter_coins'],
             'iter_all_coins': get_all_iters(),
@@ -154,11 +155,11 @@ def main_loop():
                     break
                 time.sleep(1)
         except Exception as e:
-            print('Omg')
-            print(e)
+            log('Omg')
+            log(e)
         time.sleep(5)
         x+=1
-        print(x)
+        log(x)
         if x > 5:
             break
     data = {
