@@ -6,8 +6,9 @@ from typing import Tuple
 
 
 class ByBit(BaseExchange):
-    def __init__(self, api_key: str, api_secret: str, api_passphrase: str):
+    def __init__(self, api_key: str, api_secret: str, api_passphrase: str, proxies: dict):
         self.client: Session = Session()
+        self._proxies = proxies
         self.client.proxies = self._proxies
         
     def preprocess_coin_pair(self, base_coin: str, quote_coin: str) -> str:

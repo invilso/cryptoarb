@@ -17,7 +17,7 @@ class ExchangeManager:
     def run_parse(self, coin_pair: CoinPair, exchange: Exchange, proxies: dict[str, str]):
         if exchange in coin_pair.supported_exchanges.all():
             exchange_instance: BaseExchange = self._get_exchange_instance(exchange)
-            exchange_instance.set_proxy(proxies)
+            exchange_instance.check_proxy(proxies)
             coin_pair_str = exchange_instance.preprocess_coin_pair(
                 coin_pair.base_coin, coin_pair.quote_coin
             )
@@ -31,28 +31,28 @@ class ExchangeManager:
         else:
             return False
 
-    def _get_exchange_instance(self, exchange: Exchange):
+    def _get_exchange_instance(self, exchange: Exchange, proxies: dict[str, str]):
         if exchange.name == "binance":
             return Binance(
-                exchange.api_key, exchange.api_secret, exchange.api_passphrase
+                exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies
             )
         elif exchange.name == "kucoin":
             return KuCoin(
-                exchange.api_key, exchange.api_secret, exchange.api_passphrase
+                exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies
             )
         elif exchange.name == "huobi":
-            return Huobi(exchange.api_key, exchange.api_secret, exchange.api_passphrase)
+            return Huobi(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
 
         elif exchange.name == "poloniex":
             return Poloniex(
-                exchange.api_key, exchange.api_secret, exchange.api_passphrase
+                exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies
             )
 
         elif exchange.name == "bybit":
-            return ByBit(exchange.api_key, exchange.api_secret, exchange.api_passphrase)
+            return ByBit(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
         elif exchange.name == "ascendex":
             return AscendEX(
-                exchange.api_key, exchange.api_secret, exchange.api_passphrase
+                exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies
             )
         elif exchange.name == "okx":
-            return OKX(exchange.api_key, exchange.api_secret, exchange.api_passphrase)
+            return OKX(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)

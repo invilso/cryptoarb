@@ -3,6 +3,8 @@ from main.models import CoinPair, Order
 
 from typing import TypedDict, Tuple
 from django.db import transaction
+from requests import Session
+from cryptoarb.utils import log
 
 import json
 
@@ -43,13 +45,15 @@ class BaseExchange:
     _price_depth = None
     _proxies: dict = None
 
-    def __init__(self, api_key: str, api_secret: str, api_passphrase: str):
+    def __init__(self, api_key: str, api_secret: str, api_passphrase: str, proxies: dict):
         self.api_key = api_key
         self.api_secret = api_secret
         self.api_passphrase = api_passphrase
+        self._proxies = proxies
         
-    def set_proxy(self, proxy: dict):
-        self._proxies = proxy
+    def check_proxy(self):
+        if  isinstance(self.client, Session):
+            log(self.client.get('https://api.ipify.org/').text)
 
     def preprocess_coin_pair(self, base_coin: str, quote_coin: str) -> str:
         return f"{base_coin}{quote_coin}"

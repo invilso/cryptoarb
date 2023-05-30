@@ -6,8 +6,9 @@ from typing import Tuple
 
 
 class OKX(BaseExchange):
-    def __init__(self, api_key: str, api_secret: str, api_passphrase: str):
+    def __init__(self, api_key: str, api_secret: str, api_passphrase: str, proxies: dict):
         self.client: Session = Session()
+        self._proxies = proxies
         self.client.proxies = self._proxies
         
         
