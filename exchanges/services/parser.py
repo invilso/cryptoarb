@@ -89,7 +89,7 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
             tb = sys.exception().__traceback__
             log(f'EXCEPT: {e}')
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
-            log(f'EXCEPT: {e.with_traceback(tb)}')
+            log(f'EXC EPT: {e.with_traceback(tb)}')
         
         data_real = read_json_to_dict()
         
