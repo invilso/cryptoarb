@@ -23,6 +23,7 @@ class ExchangeManager:
             )
             asks, bids = exchange_instance.get_order_books(coin_pair_str)
             processed_data = exchange_instance.process_data(bids, asks, coin_pair)
+            processed_data = exchange_instance.apply_commission(processed_data, exchange)
             exchange_instance.save_data(
                 processed_data=processed_data, exchange=exchange, coin_pair=coin_pair
             )

@@ -119,6 +119,22 @@ class BaseExchange:
         }
         return processed_data
 
+    def apply_commission(self, data: ProcessedData, exchange: Exchange) -> ProcessedData:
+        bid_with_commission = (
+            data['bid'][0] + (data['bid'][0] * (exchange.buy_percentage / 100)),
+            data['bid'][1] + (data['bid'][1] * (exchange.buy_percentage / 100))
+        )
+        ask_with_commission = (
+            data['ask'][0] + (data['ask'][0] * (exchange.sell_percentage / 100)),
+            data['ask'][1] + (data['ask'][1] * (exchange.sell_percentage / 100))
+        )
+        return {
+            'bid': bid_with_commission,
+            'ask': ask_with_commission,
+            'quantity_usd_ask': data['quantity_usd_ask'],
+            'quantity_usd_bid': data['quantity_usd_bid']
+        }
+        
     def update_in_db(
         self, processed_data: ProcessedData, exchange: Exchange, coin_pair: CoinPair
     ):
