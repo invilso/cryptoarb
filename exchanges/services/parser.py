@@ -11,7 +11,6 @@ from typing import Dict, Any
 import sys
 from celery import shared_task
 from cryptoarb.utils import log
-from django.conf import settings
 
 TOKEN = '5660072628:AAFWzMHIdZpmvKEnLpQqKxT4IzHcLsaCYHc'
 CHANNEL = '@fortestsinvilso'
@@ -123,10 +122,7 @@ def exchange_thread(exchange: int):
                 'http': f'socks5://username{i}:password{i}@localhost:9050',
                 'https': f'socks5://username{i}:password{i}@localhost:9050'
             }
-            if settings.DEBUG:
-                coin_thread(chunk, exchange, proxies)
-            else:
-                coin_thread.delay(chunk, exchange, proxies)
+            coin_thread.delay(chunk, exchange, proxies)
             # t = Thread(target=coin_thread, args=[chunk, exchange, em, proxies])
             # t.daemon = True
             # t.start()
@@ -168,10 +164,7 @@ def main_loop():
             write_dict_to_json(data)
             exchanges = Exchange.objects.all()
             for i, exchange in enumerate(exchanges):
-                if settings.DEBUG:
-                    exchange_thread(exchange.pk)
-                else:
-                    exchange_thread.delay(exchange.pk)
+                exchange_thread.delay(exchange.pk)
                 # t = Thread(target=exchange_thread, args=[exchange, em])
                 # t.daemon = True
                 # t.start()
@@ -200,10 +193,7 @@ def main_loop():
 
 @timer
 def main():
-    if settings.DEBUG:
-        main_loop()
-    else:
-        main_loop.delay()
+    main_loop.delay()
     # t = Thread(target=main_loop)
     # t.daemon = True
     # t.start()
