@@ -1,4 +1,5 @@
 import time
+import traceback
 from django.shortcuts import render
 from binance.client import Client
 from kucoin.client import Client as KuCoinClient
@@ -26,7 +27,7 @@ def MainView(request):
         else:
             status = {'broken': True}
     except Exception as e:
-        log(e)
+        log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
         status = {'broken': True}
     data = []
     for coin in CoinPair.objects.all():
