@@ -185,7 +185,7 @@ def main_loop():
         except Exception as e:
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
             log('Omg')
-            log(e)
+            log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
         time.sleep(30+(get_all_iters()/2))
         x+=1
         log(x)
