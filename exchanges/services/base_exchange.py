@@ -130,12 +130,12 @@ class BaseExchange:
 
     def apply_commission(self, data: ProcessedData, exchange: Exchange) -> ProcessedData:
         bid_with_commission = (
-            data['bid'][0] + (data['bid'][0] * (exchange.buy_percentage / 100)),
-            data['bid'][1] + (data['bid'][1] * (exchange.buy_percentage / 100))
+            float(data['bid'][0]) + (float(data['bid'][0]) * (float(exchange.buy_percentage) / 100)),
+            float(data['bid'][1]) + (float(data['bid'][1]) * (float(exchange.buy_percentage) / 100))
         )
         ask_with_commission = (
-            data['ask'][0] + (data['ask'][0] * (exchange.sell_percentage / 100)),
-            data['ask'][1] + (data['ask'][1] * (exchange.sell_percentage / 100))
+            float(data['ask'][0]) + (float(data['ask'][0]) * (float(exchange.sell_percentage) / 100)),
+            float(data['ask'][1]) + (float(data['ask'][1]) * (float(exchange.sell_percentage) / 100))
         )
         return {
             'bid': bid_with_commission,
