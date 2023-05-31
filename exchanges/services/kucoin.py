@@ -6,7 +6,7 @@ from typing import Tuple
 
 class KuCoin(BaseExchange):
     def _set_api_instance(self) -> None:
-        self.client: Client = Client(self.api_key, self.api_secret, requests_params={'proxies': self._proxies})
+        self.client: Client = Client(self.api_key, self.api_secret, self.api_passphrase, requests_params={'proxies': self._proxies})
         
     def preprocess_coin_pair(self, base_coin: str, quote_coin: str) -> str:
         return f"{base_coin}-{quote_coin}"
