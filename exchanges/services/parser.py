@@ -1,3 +1,4 @@
+import traceback
 import requests
 from .exchange_manager import ExchangeManager
 from ..models import Exchange
@@ -86,8 +87,9 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
             em.run_parse(coin_pair=CoinPair.objects.get(pk = coin_pair), exchange=Exchange.objects.get(pk = exchange), proxies=proxies)
         except Exception as e:
             errors = errors + 1
+            log(f'EXCEPT: {traceback.format_exc()}')
             log(f'EXCEPT: {e}')
-            send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
+            send_telegram_message(TOKEN, CHANNEL, f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
         
         data_real = read_json_to_dict()
         
