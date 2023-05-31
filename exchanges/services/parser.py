@@ -86,10 +86,8 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
             em.run_parse(coin_pair=CoinPair.objects.get(pk = coin_pair), exchange=Exchange.objects.get(pk = exchange), proxies=proxies)
         except Exception as e:
             errors = errors + 1
-            tb = sys.exception().__traceback__
             log(f'EXCEPT: {e}')
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
-            log(f'EXCEPT: {e.with_traceback(tb)}')
         
         data_real = read_json_to_dict()
         
