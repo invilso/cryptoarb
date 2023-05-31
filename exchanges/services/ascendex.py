@@ -28,6 +28,7 @@ class AscendEX(BaseExchange):
     def get_order_books(
         self, coin_pair: str
     ) -> Tuple[list[Tuple[float, float]], list[Tuple[float, float]]]:
+        self.client.proxies = {}
         depth_raw = self.client.get(
             f"https://ascendex.com/api/pro/v1/depth?symbol={coin_pair}"
         ).text  # Получить стакан ордеров с лимитом 5

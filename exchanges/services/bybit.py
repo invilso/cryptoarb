@@ -24,6 +24,7 @@ class ByBit(BaseExchange):
         return quantity_usd
 
     def get_order_books(self, coin_pair: str) -> Tuple[list[Tuple[float, float]], list[Tuple[float, float]]]:
+        self.client.proxies = {}
         depth_raw = self.client.get(f'https://api.bybit.com/spot/v3/public/quote/depth/merged?symbol={coin_pair}&limit=1').text
         depth = json.loads(depth_raw)['result']
         return depth["asks"], depth["bids"]

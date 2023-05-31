@@ -5,20 +5,24 @@ from kucoin.client import Client as KuCoinClient
 from .models import CoinPair, Order
 from exchanges.services.parser import read_json_to_dict, main, write_dict_to_json
 from cryptoarb.utils import log
+from django.conf import settings
 write_dict_to_json({'parser_status':False})
 
 def MainView(request):
     try:
         if request.user.is_authenticated and request.user.is_active:
+            
             status = read_json_to_dict()
             if not status['parser_status']:
-                main()
-                status['started_now'] = True
+                if not settings.DEBUG():
+                    main()
+                    status['started_now'] = True
             else:
                 timedelta = time.time() - status['start_time']
                 if timedelta > 60:
-                    main()
-                    status['started_now'] = True 
+                    if not settings.DEBUG():
+                        main()
+                        status['started_now'] = True 
         else:
             status = {'broken': True}
     except Exception as e:
@@ -28,8 +32,8 @@ def MainView(request):
     for coin in CoinPair.objects.all():
         ask_min = Order.objects.filter(coin_pair__pk = coin.pk, order_type = 'ask', quantity_usd__gte=50).order_by('-price').first()
         bid_max = Order.objects.filter(coin_pair__pk = coin.pk, order_type = 'bid', quantity_usd__gte=50).order_by('price').first()
-        # if ask_min.quantity_usd < 51 or bid_max.quantity_usd < 51:
-        #     continue
+        if ask_min is None or bid_max is None:
+            continue
         bid_min = Order.objects.filter(coin_pair__pk = coin.pk, exchange__pk = ask_min.exchange.pk, order_type = 'bid').first().price
         ask_max = Order.objects.filter(coin_pair__pk = coin.pk, exchange__pk = bid_max.exchange.pk, order_type = 'ask').first().price
         spread = ((bid_max.price - ask_min.price) / ask_min.price) * 100

@@ -24,6 +24,7 @@ class OKX(BaseExchange):
         return quantity_usd
 
     def get_order_books(self, coin_pair: str) -> Tuple[list[Tuple[float, float]], list[Tuple[float, float]]]:
+        self.client.proxies = {}
         depth_raw = self.client.get(f'https://www.okx.com/api/v5/market/books?instId={coin_pair}').text
         depth = json.loads(depth_raw)['data'][0]
         return depth["asks"], depth["bids"]

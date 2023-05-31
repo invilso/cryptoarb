@@ -6,7 +6,7 @@ from typing import Tuple
 
 class Binance(BaseExchange):
     def _set_api_instance(self) -> None:
-        self.client: Client = Client(self.api_key, self.api_secret, requests_params={'proxies': self._proxies})
+        self.client: Client = Client(self.api_key, self.api_secret)
     
     def convert_quantity_to_usd(
         self, order: Tuple[float, float], coin_pair: CoinPair
