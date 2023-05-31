@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 CSRF_TRUSTED_ORIGINS = ['https://*.invilso.pp.ua', 'http://*.invilso.pp.ua']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv('DEBUG'))
+DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
