@@ -50,8 +50,13 @@ class BaseExchange:
         self.api_secret = api_secret
         self.api_passphrase = api_passphrase
         self._proxies = proxies
+        self._set_api_instance()
         
-    def check_proxy(self):
+    def _set_api_instance(self) -> None:
+        self.client: Session = Session()
+        self.client.proxies = self._proxies
+        
+    def _check_proxy(self):
         if  isinstance(self.client, Session):
             log(self.client.get('https://api.ipify.org/').text)
 

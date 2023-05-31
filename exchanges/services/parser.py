@@ -191,7 +191,6 @@ def main_loop():
     }
     write_dict_to_json(data)
 
-#TODO add json file for profiling
 @timer
 def main():
     main_loop.delay()
