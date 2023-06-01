@@ -15,15 +15,13 @@ def MainView(request):
             
             status = read_json_to_dict()
             if not status['parser_status']:
-                if not settings.DEBUG:
-                    main()
-                    status['started_now'] = True
+                main()
+                status['started_now'] = True
             else:
                 timedelta = time.time() - status['start_time']
                 if timedelta > 60:
-                    if not settings.DEBUG:
-                        main()
-                        status['started_now'] = True 
+                    main()
+                    status['started_now'] = True 
         else:
             status = {'broken': True}
     except Exception as e:
