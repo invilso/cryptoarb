@@ -184,6 +184,7 @@ def main_loop():
             'started': False,
             'parser_status': True
         }
+        write_dict_to_json(data)
         time.sleep(30+(len(CoinPair.objects.all())/3))
         x+=1
         log(x)
