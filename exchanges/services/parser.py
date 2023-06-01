@@ -116,7 +116,12 @@ def exchange_thread(exchange: int):
 @shared_task
 def main_loop():
     x = 0
-    
+    data = {
+        'ended': False,
+        'started': False,
+        'parser_status': True
+    }
+    write_dict_to_json(data)
     while True:
         try:
             start_time = time.time()
@@ -159,12 +164,7 @@ def main_loop():
 @timer
 def main():
     main_loop.delay()
-    data = {
-        'ended': False,
-        'started': False,
-        'parser_status': True
-    }
-    write_dict_to_json(data)
+    
     # t = Thread(target=main_loop)
     # t.daemon = True
     # t.start()
