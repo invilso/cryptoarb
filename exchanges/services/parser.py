@@ -152,6 +152,7 @@ def main_loop():
     write_dict_to_json(data)
     while True:
         try:
+            start_time = time.time()
             data = {
                 'iter_coins': 0,
                 'iter_all_coins': get_all_iters(),
@@ -182,6 +183,7 @@ def main_loop():
         data = {
             'ended': True,
             'started': False,
+            'start_time': start_time,
             'parser_status': True
         }
         write_dict_to_json(data)
