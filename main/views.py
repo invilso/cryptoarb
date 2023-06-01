@@ -50,6 +50,9 @@ def MainView(request):
                 status['started_now'] = True
             else:
                 if status['started']:
+                    if not status['ended']:
+                        main()
+                        status['started_now'] = True 
                     timedelta = time.time() - status['start_time']
                     if timedelta > 90:
                         main()
