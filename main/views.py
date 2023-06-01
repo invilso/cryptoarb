@@ -49,20 +49,15 @@ def MainView(request):
                 main()
                 status['started_now'] = True
             else:
-                if status['started']:
-                    if not status['ended']:
-                        main()
-                        status['started_now'] = True 
-                    timedelta = time.time() - status['start_time']
-                    if timedelta > 90:
-                        main()
-                        status['started_now'] = True 
+                timedelta = time.time() - status['start_time']
+                if timedelta > 60:
+                    main()
+                    status['started_now'] = True 
         else:
             status = {'broken': True}
     except Exception as e:
         log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
         status = {'broken': True}
-    # status = {'broken': True}
     data = []
     for coin in CoinPair.objects.all():
         d = get_best_price(coin)
