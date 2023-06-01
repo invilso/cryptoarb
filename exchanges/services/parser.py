@@ -144,13 +144,6 @@ def main_loop():
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
             log('Omg')
             log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
-        data = {
-            'ended': True,
-            'started': False,
-            'start_time': start_time,
-            'parser_status': True
-        }
-        write_dict_to_json(data)
         time.sleep(30+(len(CoinPair.objects.all())/3))
         x+=1
         log(x)
