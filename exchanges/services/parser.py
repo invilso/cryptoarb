@@ -91,24 +91,6 @@ def coin_thread(chunk: list, exchange: int, proxies: dict[str, str]):
             log(f'EXCEPT: {e}')
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
         
-        data_real = read_json_to_dict()
-        
-        data = {
-            'iter_coins': data_real['iter_coins'] + 1,
-            'iter_all_coins': get_all_iters(),
-            'ended': False,
-            'started': True,
-            'start_time': data_real['start_time'],
-            'parser_status': True, 
-            'errors': data_real['errors'] + errors
-        }
-        
-        # if data['iter_all_coins'] == data['iter_coins']:
-        #     data['ended'] = True
-        #     data['started'] = False
-        #     log(data_real['start_time'])
-        write_dict_to_json(data)
-        
 @shared_task
 def exchange_thread(exchange: int):
     try:
@@ -130,16 +112,6 @@ def exchange_thread(exchange: int):
         data_real = read_json_to_dict()
         send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
         log(f'EXCEPT: {e}')
-        data = {
-            'iter_coins': data_real['iter_coins'],
-            'iter_all_coins': get_all_iters(),
-            'ended': False,
-            'started': True,
-            'start_time': data_real['start_time'],
-            'parser_status': True,
-            'errors': data_real['errors'] + 1
-        }
-        write_dict_to_json(data)
         
 @shared_task
 def main_loop():
@@ -154,13 +126,10 @@ def main_loop():
         try:
             start_time = time.time()
             data = {
-                'iter_coins': 0,
-                'iter_all_coins': get_all_iters(),
                 'ended': False,
                 'started': True,
-                'start_time': time.time(),
-                'parser_status': True,
-                'errors': 0
+                'start_time': start_time,
+                'parser_status': True
             }
             write_dict_to_json(data)
             exchanges = Exchange.objects.all()
