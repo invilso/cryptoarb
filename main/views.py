@@ -41,24 +41,24 @@ def get_best_price(currency_pair):
     return data
 
 def MainView(request):
-    # try:
-    #     if request.user.is_authenticated and request.user.is_active:
+    try:
+        if request.user.is_authenticated and request.user.is_active:
             
-    #         status = read_json_to_dict()
-    #         if not status['parser_status']:
-    #             main()
-    #             status['started_now'] = True
-    #         else:
-    #             timedelta = time.time() - status['start_time']
-    #             if timedelta > 60:
-    #                 main()
-    #                 status['started_now'] = True 
-    #     else:
-    #         status = {'broken': True}
-    # except Exception as e:
-    #     log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
-    #     status = {'broken': True}
-    status = {'broken': True}
+            status = read_json_to_dict()
+            if not status['parser_status']:
+                main()
+                status['started_now'] = True
+            else:
+                timedelta = time.time() - status['start_time']
+                if timedelta > 60:
+                    main()
+                    status['started_now'] = True 
+        else:
+            status = {'broken': True}
+    except Exception as e:
+        log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
+        status = {'broken': True}
+    # status = {'broken': True}
     data = []
     for coin in CoinPair.objects.all():
         d = get_best_price(coin)
