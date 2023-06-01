@@ -179,7 +179,12 @@ def main_loop():
             send_telegram_message(TOKEN, CHANNEL, f'EXCEPT: {e}')
             log('Omg')
             log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
-        time.sleep(30+(get_all_iters()/2))
+        data = {
+            'ended': True,
+            'started': False,
+            'parser_status': True
+        }
+        time.sleep(30+(len(CoinPair.objects.all())/3))
         x+=1
         log(x)
         if x > 150:
