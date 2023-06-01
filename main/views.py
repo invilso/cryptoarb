@@ -9,43 +9,62 @@ from cryptoarb.utils import log
 from django.conf import settings
 write_dict_to_json({'parser_status':False})
 
+def calculate_spread_percentage(buy_price, sell_price):
+    spread = sell_price - buy_price
+    spread_percentage = (spread / buy_price) * 100
+    return spread_percentage
+
+def get_best_price(currency_pair):
+    orders = Order.objects.filter(coin_pair=currency_pair, quantity_usd__gt=49).order_by('price')
+
+    if not orders.exists():
+        return
+    best_buy_price = orders.filter(order_type='bid').first()
+    best_sell_price = orders.filter(order_type='ask').last()
+    print(best_buy_price,best_sell_price)
+    
+    if not best_buy_price or not best_sell_price:
+        return
+    print(best_sell_price.exchange, currency_pair)
+    data = {
+        'currency_pair': currency_pair,
+        'buy_exchange': best_buy_price.exchange,
+        'sell_exchange': best_sell_price.exchange,
+        'buy_bid': best_buy_price.price,
+        'buy_ask': Order.objects.filter(coin_pair=currency_pair, exchange=best_buy_price.exchange, order_type='ask').last().price,
+        'sell_bid': Order.objects.filter(coin_pair=currency_pair, exchange=best_sell_price.exchange, order_type='bid').last().price,
+        'sell_ask': best_sell_price.price,
+        'buy_volume': best_buy_price.quantity_usd,
+        'sell_volume': best_sell_price.quantity_usd,
+        'spread_percentage': calculate_spread_percentage(best_buy_price.price, best_sell_price.price)
+    }
+    return data
+
 def MainView(request):
-    try:
-        if request.user.is_authenticated and request.user.is_active:
+    # try:
+    #     if request.user.is_authenticated and request.user.is_active:
             
-            status = read_json_to_dict()
-            if not status['parser_status']:
-                main()
-                status['started_now'] = True
-            else:
-                timedelta = time.time() - status['start_time']
-                if timedelta > 60:
-                    main()
-                    status['started_now'] = True 
-        else:
-            status = {'broken': True}
-    except Exception as e:
-        log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
-        status = {'broken': True}
+    #         status = read_json_to_dict()
+    #         if not status['parser_status']:
+    #             main()
+    #             status['started_now'] = True
+    #         else:
+    #             timedelta = time.time() - status['start_time']
+    #             if timedelta > 60:
+    #                 main()
+    #                 status['started_now'] = True 
+    #     else:
+    #         status = {'broken': True}
+    # except Exception as e:
+    #     log(f'EXCEPT:\n {traceback.format_exc()} \n\n {e}')
+    #     status = {'broken': True}
+    status = {'broken': True}
     data = []
     for coin in CoinPair.objects.all():
-        ask_min = Order.objects.filter(coin_pair__pk = coin.pk, order_type = 'ask', quantity_usd__gte=50).order_by('-price').first()
-        bid_max = Order.objects.filter(coin_pair__pk = coin.pk, order_type = 'bid', quantity_usd__gte=50).order_by('price').first()
-        if ask_min is None or bid_max is None:
-            continue
-        bid_min = Order.objects.filter(coin_pair__pk = coin.pk, exchange__pk = ask_min.exchange.pk, order_type = 'bid').first().price
-        ask_max = Order.objects.filter(coin_pair__pk = coin.pk, exchange__pk = bid_max.exchange.pk, order_type = 'ask').first().price
-        spread = ((bid_max.price - ask_min.price) / ask_min.price) * 100
-        data.append(
-            {
-                'coin_pair': coin,
-                'ask_min': ask_min,
-                'ask_max': ask_max,#
-                'bid_max': bid_max,
-                'bid_min': bid_min,#
-                'spread': spread
-            }
-        )
+        d = get_best_price(coin)
+        if d:
+            data.append(d)
         
-    sorted_data = sorted(data, key=lambda x: x['spread'], reverse=True)
+    print(data)
+    sorted_data = sorted(data, key=lambda x: x['spread_percentage'], reverse=True)
     return render(request, 'main/list.html', {'data': sorted_data, 'status': status})

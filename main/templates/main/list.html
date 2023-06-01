@@ -119,14 +119,14 @@
 	  	{% for item in data %}
 		<tr>
 			<td>{{ forloop.counter }}</td>
-			<td>{{item.coin_pair}}<span style="font-size: 10px !important;">{{item.coin_pair.sell_net}}</span></td>
-			<td><a href="{{item.ask_min.exchange.website}}"><strong>{{item.ask_min.exchange.name}}</strong></a></td>
-			<td><a href="{{item.bid_max.exchange.website}}"><strong>{{item.bid_max.exchange.name}}</strong></a></td>
-			<td>{{item.bid_min}}/{{item.ask_min.price}}</td>
-			<td>{{item.bid_max.price}}/{{item.ask_max}}</td>
-			<td>${{item.ask_min.quantity_usd|floatformat:"5"}}</td>
-			<td>${{item.bid_max.quantity_usd|floatformat:"5"}}</td>
-		    <td>{{ item.spread|floatformat:"2" }}%</td>
+			<td>{{item.currency_pair}}<span style="font-size: 10px !important;">{{item.currency_pair.sell_net}}</span></td>
+			<td><a href="{{item.buy_exchange.website}}"><strong>{{item.buy_exchange.name}}</strong></a></td>
+			<td><a href="{{item.sell_exchange.website}}"><strong>{{item.sell_exchange.name}}</strong></a></td>
+			<td>{{item.buy_bid}}/{{item.buy_ask}}</td>
+			<td>{{item.sell_bid}}/{{item.sell_ask}}</td>
+			<td>${{item.buy_volume|floatformat:"5"}}</td>
+			<td>${{item.sell_volume|floatformat:"5"}}</td>
+		    <td>{{ item.spread_percentage|floatformat:"2" }}%</td>
 		</tr>
 	    {% endfor %}
 	  </tbody>

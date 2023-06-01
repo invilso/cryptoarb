@@ -1,3 +1,5 @@
+import random
+import time
 from .base_exchange import BaseExchange
 from kucoin.client import Client
 from main.models import CoinPair
@@ -24,5 +26,6 @@ class KuCoin(BaseExchange):
         return quantity_usd
 
     def get_order_books(self, coin_pair: str) -> Tuple[list[Tuple[float, float]], list[Tuple[float, float]]]:
+        time.sleep(random.randint(50, 300))
         depth = self.client.get_order_book(coin_pair)  # Получить стакан ордеров с лимитом 5
         return depth["asks"], depth["bids"]
