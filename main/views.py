@@ -62,7 +62,8 @@ def MainView(request):
     for coin in CoinPair.objects.all():
         d = get_best_price(coin)
         if d:
-            data.append(d)
+            if d['spread_percentage'] > 0 and d['buy_exchange'].pk != d['sell_exchange'].pk:
+                data.append(d)
         
     print(data)
     sorted_data = sorted(data, key=lambda x: x['spread_percentage'], reverse=True)
