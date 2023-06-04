@@ -19,8 +19,8 @@ def get_best_price(currency_pair):
 
     if not orders.exists():
         return
-    best_buy_price = orders.filter(order_type='bid').first()
-    best_sell_price = orders.filter(order_type='ask').last()
+    best_buy_price = orders.filter(order_type='ask').first()
+    best_sell_price = orders.filter(order_type='bid').last()
     print(best_buy_price,best_sell_price)
     
     if not best_buy_price or not best_sell_price:
@@ -31,8 +31,8 @@ def get_best_price(currency_pair):
         'buy_exchange': best_buy_price.exchange,
         'sell_exchange': best_sell_price.exchange,
         'buy_bid': best_buy_price.price,
-        'buy_ask': Order.objects.filter(coin_pair=currency_pair, exchange=best_buy_price.exchange, order_type='ask').last().price,
-        'sell_bid': Order.objects.filter(coin_pair=currency_pair, exchange=best_sell_price.exchange, order_type='bid').last().price,
+        'buy_ask': Order.objects.filter(coin_pair=currency_pair, exchange=best_buy_price.exchange, order_type='bid').last().price,
+        'sell_bid': Order.objects.filter(coin_pair=currency_pair, exchange=best_sell_price.exchange, order_type='ask').last().price,
         'sell_ask': best_sell_price.price,
         'buy_volume': best_buy_price.quantity_usd,
         'sell_volume': best_sell_price.quantity_usd,
