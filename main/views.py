@@ -11,7 +11,7 @@ write_dict_to_json({'parser_status':False})
 
 def calculate_spread_percentage(buy_price, sell_price):
     spread = sell_price - buy_price
-    spread_percentage = (spread / buy_price) * 100
+    spread_percentage = ((sell_price - buy_price) / buy_price) * 100
     return spread_percentage
 
 def get_best_price(currency_pair):
