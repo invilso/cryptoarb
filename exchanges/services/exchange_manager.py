@@ -8,6 +8,7 @@ from .poloniex import Poloniex
 from .ascendex import AscendEX
 from .okx import OKX
 from .bybit import ByBit
+from .lbank import LBank
 
 
 class ExchangeManager:
@@ -52,3 +53,5 @@ class ExchangeManager:
             )
         elif exchange.name == "okx":
             return OKX(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
+        elif exchange.name == "lbank":
+            return LBank(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)

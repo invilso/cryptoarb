@@ -10,6 +10,7 @@ class Exchange(models.Model):
         ('ascendex', 'AscendEX'),
         ('bybit', 'ByBit'),
         ('okx', 'OKX'),
+        ('lbank', 'LBank'),
     ]
 
     name = models.CharField(max_length=50, choices=EXCHANGE_CHOICES, unique=True)
