@@ -9,6 +9,8 @@ from .ascendex import AscendEX
 from .okx import OKX
 from .bybit import ByBit
 from .lbank import LBank
+from .mexc import MEXC
+from .gateio import GateIO
 
 
 class ExchangeManager:
@@ -56,4 +58,6 @@ class ExchangeManager:
         elif exchange.name == "lbank":
             return LBank(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
         elif exchange.name == "mexc":
-            return LBank(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
+            return MEXC(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
+        elif exchange.name == "gateio":
+            return GateIO(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)

@@ -12,6 +12,7 @@ class Exchange(models.Model):
         ('okx', 'OKX'),
         ('lbank', 'LBank'),
         ('mexc', 'MEXC'),
+        ('gateio', 'GateIO'),
     ]
 
     name = models.CharField(max_length=50, choices=EXCHANGE_CHOICES, unique=True)
