@@ -120,8 +120,8 @@
 		<tr>
 			<td>{{ forloop.counter }}</td>
 			<td>{{item.currency_pair}}<span style="font-size: 10px !important;">{{item.currency_pair.sell_net}}</span></td>
-			<td><a href="{{item.buy_exchange.website}}"><strong>{{item.buy_exchange.name}}</strong></a></td>
-			<td><a href="{{item.sell_exchange.website}}"><strong>{{item.sell_exchange.name}}</strong></a></td>
+			<td><a href="{{item.buy_exchange.website}}"><strong>{{item.buy_exchange.get_name_display}}</strong></a></td>
+			<td><a href="{{item.sell_exchange.website}}"><strong>{{item.sell_exchange.get_name_display}}</strong></a></td>
 			<td>{{item.buy_bid|floatformat:"8"}}/{{item.buy_ask|floatformat:"8"}}</td>
 			<td>{{item.sell_bid|floatformat:"8"}}/{{item.sell_ask|floatformat:"8"}}</td>
 			<td>${{item.buy_volume|floatformat:"5"}}</td>
