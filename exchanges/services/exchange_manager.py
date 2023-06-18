@@ -55,3 +55,5 @@ class ExchangeManager:
             return OKX(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
         elif exchange.name == "lbank":
             return LBank(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
+        elif exchange.name == "mexc":
+            return LBank(exchange.api_key, exchange.api_secret, exchange.api_passphrase, proxies = proxies)
